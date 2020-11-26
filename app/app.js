@@ -19,4 +19,10 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/db', dbRouter);
 
+app.get('/checkAlive', (req, res, next) => {
+    res.status(200).send(true);
+});
+
 module.exports = app;
+
+app.listen(3000);
