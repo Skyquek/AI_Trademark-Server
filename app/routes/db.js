@@ -20,7 +20,6 @@ router.get('/query', async (req, res, next) => {
 
   if (req.query.string.indexOf('*') >= 0) {
     // If search query contains a wildcard symbol, we take that as user defined and do not do our own processing.
-    console.log("Wildcard");
 
     var sanitizedString = req.query.string.replace(/\*/g, '%');
     console.log(sanitizedString);
@@ -72,6 +71,11 @@ router.get('/query', async (req, res, next) => {
   }
 });
 
-
+router.get('/random', (req, res) => {
+  dbConn.query('SELECT * FROM trademarkprj.tbl_trademark ORDER BY RAND() LIMIT 1', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+})
 
 module.exports = router;
