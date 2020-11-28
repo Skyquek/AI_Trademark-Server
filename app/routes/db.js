@@ -17,6 +17,7 @@ try {
 
 /* Get matching trademark names */
 router.get('/query', async (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
   if (!req.query['string']) {
     res.send('No parameters passed.');
 
