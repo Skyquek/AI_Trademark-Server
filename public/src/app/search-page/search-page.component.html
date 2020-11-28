@@ -1,14 +1,20 @@
-<div style="text-align: center">
+<div class="searchpagemain" style="text-align: center; width:80%;">
 
-    <img src="../assets/logo-wording.png" style="width:80%"/>
+    <img class="logo" src="../assets/logo-wording.png" />
     <br><br>
-    <mat-form-field appearance="outline" style="width:100%">
-        <mat-label>Search</mat-label>
-        <input matInput placeholder="Any trademark you want to search 😍">
-    </mat-form-field>
-    <br>
-    <button mat-raised-button color="primary">Search</button>
-    <span style="padding-left:5%"></span>
-    <button mat-raised-button>Random Trademark</button>
+    <form (submit)="onSearch(searchForm)" #searchForm="ngForm">
+        <mat-form-field appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput name="searchString"
+                placeholder="Any trademark you want to search 😍"
+                ngModel #searchString="ngModel">
+        </mat-form-field>
+        <mat-error *ngIf="searchError">Please input a search string.</mat-error>
+        <br>
+        <button mat-raised-button color="primary" type="submit">Search</button>
+        <span style="padding-left:5%"></span>
+        <button mat-raised-button>Random Trademark</button>
+
+    </form>
 
 </div>
