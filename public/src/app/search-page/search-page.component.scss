@@ -1,16 +1,20 @@
-.searchpagemain {
-  position: relative;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.searchpagemain { 
+  height: 250px;
+  width: 100%;
+  text-align: center;
 }
 
 .logo {
     width: 70%;
-    max-width: 708px;
+    max-width: 500px;
 }
 
 mat-form-field {
     width: 100%;
     max-width: 700px;
+}
+
+.searchResults{
+  width: 100%;
+    max-width: 500px;
 }

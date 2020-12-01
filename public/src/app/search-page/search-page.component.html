@@ -1,13 +1,11 @@
-<div class="searchpagemain" style="text-align: center; width:80%;">
-
+<div class="searchpagemain">
     <img class="logo" src="../assets/logo-wording.png" />
     <br><br>
     <form (submit)="onSearch(searchForm)" #searchForm="ngForm">
         <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
-            <input matInput name="searchString"
-                placeholder="Any trademark you want to search 😍"
-                ngModel #searchString="ngModel">
+            <input matInput name="searchString" placeholder="Any trademark you want to search 😍" ngModel
+                #searchString="ngModel" (click)="this.searchError = false">
         </mat-form-field>
         <mat-error *ngIf="searchError">Please input a search string.</mat-error>
         <br>
@@ -16,5 +14,27 @@
         <button mat-raised-button>Random Trademark</button>
 
     </form>
+</div>
+<div *ngIf="this.queried" id="searchResults">
+    <mat-card *ngIf="this.queried" style="text-align:left;">
+        Query returned {{results.length}} results.
+        <div *ngIf="results.length > 0">
+            <mat-card class="result-card" *ngFor="let result of results" (click)="resultClick(result.number)">
+                <mat-card-header>
+                    <mat-card-title>{{result.brand}}</mat-card-title>
+                    <mat-card-subtitle>{{result.holder}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    ID : {{result.number}} <br>
+                    Source : {{result.source}} <br>
+                    Status : {{result.status}} <br>
+                    Relevance : {{result.relevance}} <br>
+                    Origin : {{result.origin}} <br>
+                    App. Date : {{result.applicationdate}} <br>
+                    Text OCR : {{result.textocr}} <br>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </mat-card>
 
 </div>
