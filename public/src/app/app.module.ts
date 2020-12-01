@@ -16,8 +16,12 @@ import { AppComponent } from './app.component';
 import { SearchPageComponent } from './search-page/search-page.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SearchResultElementComponent } from './search-page/search-result-element/search-result-element.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
-const routes: Routes = [{ path: '', component: SearchPageComponent }];
+const routes: Routes = [
+  { path: '', component: SearchPageComponent },
+  { path: '**', component: PageNotFoundComponent },
+];
 
 @NgModule({
   declarations: [
