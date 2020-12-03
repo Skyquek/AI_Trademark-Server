@@ -48,8 +48,23 @@ function otherMatch(queryString, column) {
   );
 
 }
+
+/**
+ * Get results based on string
+ * @param {string} queryString String to search
+ * @param {string} column Column to target search
+ */
+function exactMatch(queryString, column) {
+  return dbQuery(
+    'SELECT * FROM tbl_trademark WHERE UPPER(' + column + ')=?',
+    [queryString.toUpperCase()]
+  );
+}
+
 /* Get matching trademark names */
 router.get('/query', async (req, res, next) => {
+  var pre_query = new Date().getTime();
+
   const queryString = req.query.string;
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (!req.query['string']) {
@@ -66,6 +81,15 @@ router.get('/query', async (req, res, next) => {
           dbConn.end();
 
           if (err) console.log(err);
+
+          var post_query = new Date().getTime();
+
+          console.log((post_query - pre_query) / 1000);
+
+          res.send({
+            responseTime: (post_query - pre_query) / 1000,
+            results: result
+          });
         });
 
     } else {
@@ -82,6 +106,16 @@ router.get('/query', async (req, res, next) => {
         ], (err, result) => {
           dbConn.end();
           if (err) console.log(err);
+
+          var post_query = new Date().getTime();
+
+          console.log((post_query - pre_query) / 1000);
+
+          result = {
+            responseTime: (post_query - pre_query) / 1000,
+            results: result
+          }
+
           res.send(result);
         }
       )
