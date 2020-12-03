@@ -1,19 +1,9 @@
 var express = require('express');
 
+const utils = require('../utils');
 const credentials = require('../../credentials');
 
-var mysql = require('mysql');
 var router = express.Router();
-
-console.log(credentials.mysql);
-
-let dbConn;
-try {
-  dbConn = mysql.createConnection(credentials.mysql);
-
-} catch (err) {
-  console.log(err.message);
-}
 
 /**
  * Runs a SQL query based on the supplied query and parameters.
@@ -22,7 +12,9 @@ try {
  */
 function dbQuery(statement, params) {
   return new Promise((resolve, reject) => {
+    const dbConn = utils.getdbConn();
     dbConn.query(statement, params, (err, result) => {
+      dbConn.end();
       if (err) reject(err);
       resolve(result);
     })
@@ -68,14 +60,17 @@ router.get('/query', async (req, res, next) => {
       // If search query contains a wildcard symbol, we take that as user defined and do not do our own processing.
 
       var sanitizedString = req.query.string.replace(/\*/g, '%');
+      const dbConn = utils.getdbConn();
       dbConn.query("SELECT * FROM tbl_trademark WHERE brand LIKE ? UNION SELECT * FROM tbl_trademark WHERE holder LIKE ?",
         [sanitizedString, sanitizedString], (err, result) => {
-          if (err) throw err;
-          res.send(result);
+          dbConn.end();
+
+          if (err) console.log(err);
         });
 
     } else {
       // Workload that is placed on database server
+      const dbConn = utils.getdbConn();
       dbConn.query('SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? UNION SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? AND number NOT IN (SELECT number FROM tbl_trademark WHERE UPPER(brand) LIKE ?) UNION SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ? UNION SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ? AND number NOT IN (SELECT number FROM tbl_trademark WHERE UPPER(holder) LIKE ?)',
         [
           queryString.toUpperCase() + '%',
@@ -85,7 +80,8 @@ router.get('/query', async (req, res, next) => {
           '%' + queryString.toUpperCase() +
           '%', queryString.toUpperCase() + '%'
         ], (err, result) => {
-          if (err) throw err;
+          dbConn.end();
+          if (err) console.log(err);
           res.send(result);
         }
       )
@@ -115,8 +111,18 @@ router.get('/query', async (req, res, next) => {
   }
 });
 
+router.get('/trademark/:id', (req, res) => {
+  console.log(req.params.id);
+  exactMatch(req.params.id, 'number').then((response) => {
+    res.send(response);
+  });
+
+});
+
 router.get('/random', (req, res) => {
+  const dbConn = utils.getdbConn();
   dbConn.query('SELECT * FROM trademarkprj.tbl_trademark ORDER BY RAND() LIMIT 1', (err, result) => {
+    dbConn.end();
     if (err) throw err;
     res.send(result);
   });
