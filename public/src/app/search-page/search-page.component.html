@@ -26,6 +26,9 @@
         <div *ngIf="response.results.length > 0">
             <mat-card class="result-card" *ngFor="let result of response.results" (click)="resultClick(result.number)">
                 <mat-card-header>
+                    <img mat-card-avatar
+                        [src]="'https://trademark-space.nyc3.digitaloceanspaces.com/img/' + result.number + '.jpg'"
+                        onerror="this.src = '../assets/PlaceholderImage.svg'" />
                     <mat-card-title>{{result.brand}}</mat-card-title>
                     <mat-card-subtitle>{{result.holder}}</mat-card-subtitle>
                 </mat-card-header>
