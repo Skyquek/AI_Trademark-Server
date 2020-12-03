@@ -14,26 +14,32 @@ const backend: String = 'http://localhost:3000';
 })
 export class SearchPageComponent implements OnInit {
   searchError: boolean = false;
-  results: any = [];
+  response: any = [];
+  responseTime: any;
   queried: boolean = false;
+  pending: boolean = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   onSearch(form: NgForm) {
+    this.queried = false;
     if (form.value.searchString == '') {
       this.searchError = true;
       return;
     } else {
+      this.pending = true;
       this.http
         .get(backend + '/db/query', {
           params: new HttpParams().set('string', form.value.searchString),
         })
         .subscribe((res) => {
-          this.results = res;
+          this.response = res;
           this.queried = true;
+          this.pending = false;
         });
     }
   }
+  // TODO: To retry connection every n seconds if query fails
 
   resultClick(targetID: String) {
     console.log('Clicked ' + targetID);

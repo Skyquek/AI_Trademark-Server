@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
@@ -10,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -36,6 +36,7 @@ const routes: Routes = [
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,

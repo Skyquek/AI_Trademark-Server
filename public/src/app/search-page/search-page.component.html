@@ -15,11 +15,16 @@
 
     </form>
 </div>
-<div *ngIf="this.queried" id="searchResults">
+<div *ngIf="this.queried || this.pending" id="searchResults">
+    <div *ngIf="this.pending" style="padding-top:40px; padding-bottom:40px">
+        <mat-spinner></mat-spinner>
+    </div>
     <mat-card *ngIf="this.queried" style="text-align:left;">
-        Query returned {{results.length}} results.
-        <div *ngIf="results.length > 0">
-            <mat-card class="result-card" *ngFor="let result of results" (click)="resultClick(result.number)">
+        <div style="padding-top:20px; padding-bottom: 20px">
+            Query returned {{response.results.length}} results in {{response.responseTime}} seconds.
+        </div>
+        <div *ngIf="response.results.length > 0">
+            <mat-card class="result-card" *ngFor="let result of response.results" (click)="resultClick(result.number)">
                 <mat-card-header>
                     <mat-card-title>{{result.brand}}</mat-card-title>
                     <mat-card-subtitle>{{result.holder}}</mat-card-subtitle>
