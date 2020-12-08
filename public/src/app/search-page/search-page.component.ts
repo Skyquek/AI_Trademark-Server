@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { Router } from '@angular/router';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { HttpClient, HttpClientModule, HttpParams } from '@angular/common/http';
-
-const backend: String = 'http://localhost:3000';
+import { Connections } from '../../../credentials';
 
 @Component({
   selector: 'app-search-page',
@@ -14,12 +12,12 @@ const backend: String = 'http://localhost:3000';
 })
 export class SearchPageComponent implements OnInit {
   searchError: boolean = false;
-  response: any = [];
+  response: any;
   responseTime: any;
   queried: boolean = false;
   pending: boolean = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   onSearch(form: NgForm) {
     this.queried = false;
@@ -29,10 +27,10 @@ export class SearchPageComponent implements OnInit {
     } else {
       this.pending = true;
       this.http
-        .get(backend + '/db/query', {
+        .get(Connections.backEndURL + '/db/query', {
           params: new HttpParams().set('string', form.value.searchString),
         })
-        .subscribe((res) => {
+        .subscribe((res: any) => {
           this.response = res;
           this.queried = true;
           this.pending = false;
