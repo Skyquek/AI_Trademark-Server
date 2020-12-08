@@ -26,6 +26,7 @@ export class SearchPageComponent implements OnInit {
       return;
     } else {
       this.pending = true;
+      this.searchError = false;
       this.http
         .get(Connections.backEndURL + '/db/query', {
           params: new HttpParams().set('string', form.value.searchString),

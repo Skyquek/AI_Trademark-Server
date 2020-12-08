@@ -24,7 +24,7 @@
             Query returned {{response.results.length}} results in {{response.responseTime}} seconds.
         </div>
         <div *ngIf="response.results.length > 0">
-            <mat-card class="result-card" *ngFor="let result of response.results" (click)="resultClick(result.number)">
+            <mat-card *ngFor="let result of response.results" (click)="resultClick(result.number)" id="result-card">
                 <mat-card-header>
                     <img mat-card-avatar
                         [src]="'https://trademark-space.nyc3.digitaloceanspaces.com/img/' + result.number + '.jpg'"
