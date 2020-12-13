@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { HttpClient, HttpParams } from '@angular/common/http';
-
-import { Connections } from '../../../credentials';
+import { SimpleSearchService } from 'services/simple-search.service';
+import { SimpleSearchResult } from 'models/simple-search-result';
 
 @Component({
   selector: 'app-search-page',
@@ -12,12 +11,11 @@ import { Connections } from '../../../credentials';
 })
 export class SearchPageComponent implements OnInit {
   searchError: boolean = false;
-  response: any;
-  responseTime: any;
   queried: boolean = false;
   pending: boolean = false;
+  response: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private simpleSearchService: SimpleSearchService) {}
 
   onSearch(form: NgForm) {
     this.queried = false;
@@ -27,12 +25,10 @@ export class SearchPageComponent implements OnInit {
     } else {
       this.pending = true;
       this.searchError = false;
-      this.http
-        .get(Connections.backEndURL + '/db/query', {
-          params: new HttpParams().set('string', form.value.searchString),
-        })
-        .subscribe((res: any) => {
-          this.response = res;
+      this.simpleSearchService
+        .search(form.value.searchString)
+        .subscribe((result: SimpleSearchResult) => {
+          this.response = result;
           this.queried = true;
           this.pending = false;
         });
@@ -40,7 +36,7 @@ export class SearchPageComponent implements OnInit {
   }
   // TODO: To retry connection every n seconds if query fails
 
-  resultClick(targetID: String) {
+  resultClick(targetID: string) {
     console.log('Clicked ' + targetID);
     window.open('/detail/' + targetID, '_blank');
     // this.router.navigateByUrl('/detail/' + targetID);
