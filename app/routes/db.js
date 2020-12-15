@@ -62,7 +62,7 @@ function exactMatch(queryString, column) {
 }
 
 /* Get matching trademark names */
-router.get('/query', async (req, res, next) => {
+router.get('/search', async (req, res, next) => {
   var pre_query = new Date().getTime();
 
   const queryString = req.query.string;
@@ -144,6 +144,13 @@ router.get('/query', async (req, res, next) => {
 
   }
 });
+
+router.get('/holder/:name', (req, res) => {
+  console.log(req.params.name);
+  exactMatch(req.params.name, 'holder').then((response) => {
+    res.send(response);
+  })
+})
 
 router.get('/trademark/:id', (req, res) => {
   console.log(req.params.id);
