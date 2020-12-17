@@ -160,6 +160,28 @@ router.get('/trademark/:id', (req, res) => {
 
 });
 
+router.get('/all/:key', (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  if (req.params.key == credentials.dbAllKey) {
+    dbQuery('SELECT * FROM tbl_trademark', []).then((results) => {
+      res.send(results);
+    });
+  } else {
+    res.send(false);
+  }
+});
+
+router.get('/abAll/:key', (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  if (req.params.key == credentials.dbAllKey) {
+    dbQuery('SELECT number, brand FROM tbl_trademark', []).then((results) => {
+      res.send(results);
+    });
+  } else {
+    res.send(false);
+  }
+});
+
 router.get('/random', (req, res) => {
   const dbConn = utils.getdbConn();
   dbConn.query('SELECT * FROM trademarkprj.tbl_trademark ORDER BY RAND() LIMIT 1', (err, result) => {
