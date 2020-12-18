@@ -11,15 +11,17 @@ const aiBackend = 'http://128.199.159.89:7000/';
 router.get('/compare', (req, res) => {
     var pre_query = new Date().getTime();
     res.setHeader("Access-Control-Allow-Origin", "*");
+    // console.log(`Start compare ${req.query.q1}, ${req.query.q2}`);
     comparePhonetic(req.query.q1, req.query.q2).then((result) => {
         var post_query = new Date().getTime();
         res.send({
+            success: true,
             responseTime: (post_query - pre_query) / 1000,
             results: result
         });
     }).catch(err => {
-        console.log(err.response.status + ": " + err.response.statusText + " - " + err.request.path);
-
+        // console.log(err);
+        res.send({ success: false });
     });
 
     // res.send({ "responseTime": 3.226, "results": { "image_title1": "static/phonetic/image/NIKE.png", "image_title2": "static/phonetic/image/NIKI.png", "image_title_combined": "static/phonetic/image_test/NIKE.NIKI.0.png", "percentage_difference": 0.03, "tm1": "NIKE", "tm2": "NIKI", "result_phonetic": "Similar Phonetic", "confidence_phonetic": "100.00%", "phonetic_similar": true, "word1_list": [0, 43, 5, 18, 4, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47], "word2_list": [0, 43, 5, 18, 5, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47, 47] } });
@@ -40,7 +42,12 @@ function comparePhonetic(q1, q2) {
 
 
         }).catch((err) => {
-            // console.log(err);
+            if (err.response) {
+                console.log(err.response.status + ": " + err.response.statusText + " - " + err.request.path);
+
+            } else {
+                console.log(err.code + ": " + err.config.url);
+            }
             reject(err);
         })
 

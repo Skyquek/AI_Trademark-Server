@@ -3,7 +3,12 @@ import * as http from "http";
 import * as WebSocket from "ws";
 const axios = require("axios");
 
-import { ExtWebSocket, ClientReq, TrademarkAB } from "models/abSocket";
+import {
+  ExtWebSocket,
+  ClientReq,
+  TrademarkAB,
+  AbResult,
+} from "models/abSocket";
 import { AxiosResponse } from "axios";
 
 const app = express();
@@ -48,6 +53,44 @@ function one_by_one(
   }
 }
 
+function abCompare(
+  trademark: TrademarkAB,
+  searchString: string
+): Promise<AbResult> {
+  return new Promise<AbResult>((resolve, reject) => {
+    console.log(`Comparing ${searchString} with ${trademark.brand}`);
+    axios
+      .get(dbApiServer + "ab/compare", {
+        params: {
+          q1: searchString,
+          q2: trademark.brand,
+        },
+      })
+      .then((res: AxiosResponse) => {
+        console.log("Response for " + searchString + " vs " + trademark.brand);
+        resolve(res.data as AbResult);
+      })
+      .catch((err: any) => {
+        if (err.response) {
+          // If server gives a response
+          const responseString: string =
+            err.response.status +
+            ": " +
+            err.response.statusText +
+            " - " +
+            err.request.path;
+
+          console.log(responseString);
+          reject(responseString);
+        } else {
+          // If server does not give a response
+          console.log(err);
+          reject({ success: false });
+        }
+      });
+  });
+}
+
 wsServer.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
   const extWs = ws as ExtWebSocket;
   extWs.isAlive = true;
@@ -80,30 +123,19 @@ wsServer.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
           return res.data;
         })
         .then((trademarks: Array<TrademarkAB>) => {
-          console.log("Start comparing");
-          var counter = 0;
           one_by_one(trademarks, (trademark: TrademarkAB) => {
-            setTimeout(() => {
-              axios
-                .get(dbApiServer + "ab/compare", {
-                  params: {
-                    q1: parsedData.searchString,
-                    q2: trademark.brand,
-                  },
-                })
-                .then((res: AxiosResponse) => {
-                  console.log(
-                    "Response for " +
-                      res.data.results.tm1 +
-                      " vs " +
-                      res.data.results.tm2
+            return abCompare(trademark, parsedData.searchString).then(
+              (res: AbResult) => {
+                if (res.success) {
+                  ws.send(JSON.stringify(res));
+                } else {
+                  // TODO: If fail, send to an array to rerun after everything is done
+                  ws.send(
+                    `Comparison between ${trademark} and ${parsedData.searchString} failed.`
                   );
-                  ws.send(JSON.stringify(res.data));
-                })
-                .catch((err: any) => {
-                  console.log(err);
-                });
-            }, counter++ * 4000);
+                }
+              }
+            );
           });
         });
     } catch (err) {
