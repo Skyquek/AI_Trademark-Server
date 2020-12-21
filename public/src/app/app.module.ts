@@ -18,9 +18,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SearchResultElementComponent } from './search-page/search-result-element/search-result-element.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SimpleAbComparisonComponent } from './ab-comparison/simple-ab-comparison/simple-ab-comparison.component';
+import { AbComparisonAllComponent } from './ab-comparison/ab-comparison-all/ab-comparison-all.component';
 
 const routes: Routes = [
   { path: 'ab/simple', component: SimpleAbComparisonComponent },
+  { path: 'ab/all', component: AbComparisonAllComponent },
   { path: '', component: SearchPageComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
@@ -31,6 +33,7 @@ const routes: Routes = [
     SearchPageComponent,
     SearchResultElementComponent,
     SimpleAbComparisonComponent,
+    AbComparisonAllComponent,
   ],
   imports: [
     RouterModule.forRoot(routes),

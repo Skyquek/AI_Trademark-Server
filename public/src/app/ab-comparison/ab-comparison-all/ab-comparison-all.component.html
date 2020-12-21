@@ -1,0 +1,28 @@
+<div *ngIf="totalResultCount >= 0">
+    A total of {{totalResultCount}} results will be queued for processing. <br>
+    Processed result {{resultList.length}} of {{totalResultCount}}. <br>
+    {{totalResultCount - resultList.length}} remaining.
+</div>
+
+<div *ngFor="let result of resultList">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>{{result.results.tm1}} vs {{result.results.tm2}}</mat-card-title>
+            <mat-card-subtitle *ngIf="result.results.phonetic_similar">
+                Similar by {{result.results.percentage_difference * 100}}% with
+                {{result.results.confidence_phonetic}} confidence.
+            </mat-card-subtitle>
+            <mat-card-subtitle *ngIf="!result.results.phonetic_similar">
+                Not similar with {{result.results.confidence_phonetic}} confidence.
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            {{result.results}}
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<input [(ngModel)]="newMessage" (keyup)="$event.keyCode == 13 && sendMessage()" />
+<button (click)="sendMessage()">
+    Send Message
+</button>
