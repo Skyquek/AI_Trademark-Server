@@ -8,6 +8,10 @@ import {
   ClientReq,
   TrademarkAB,
   AbResult,
+  AbResultWs,
+  WsMessage,
+  ResultCount,
+  AbResponse,
 } from "models/abSocket";
 import { AxiosResponse } from "axios";
 
@@ -56,8 +60,8 @@ function one_by_one(
 function abCompare(
   trademark: TrademarkAB,
   searchString: string
-): Promise<AbResult> {
-  return new Promise<AbResult>((resolve, reject) => {
+): Promise<AbResultWs> {
+  return new Promise<AbResultWs>((resolve, reject) => {
     console.log(`Comparing ${searchString} with ${trademark.brand}`);
     axios
       .get(dbApiServer + "ab/compare", {
@@ -68,7 +72,7 @@ function abCompare(
       })
       .then((res: AxiosResponse) => {
         console.log("Response for " + searchString + " vs " + trademark.brand);
-        resolve(res.data as AbResult);
+        resolve(res.data as AbResultWs);
       })
       .catch((err: any) => {
         if (err.response) {
@@ -101,7 +105,13 @@ wsServer.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
   });
 
   // On connect, do this
-  ws.send("Hi there, I am a WebSocket server");
+  const res: WsMessage = {
+    type: "message",
+    msg: "Hi there, I am a WebSocket server",
+  };
+  ws.send(JSON.stringify(res), (err: any) => {
+    console.log(err);
+  });
 
   // On the existence of incoming data, do this
   ws.on("message", (data: string) => {
@@ -109,7 +119,12 @@ wsServer.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
     let parsedData: ClientReq;
     try {
       parsedData = JSON.parse(data) as ClientReq;
-      ws.send(JSON.stringify(parsedData.searchString));
+
+      const res: WsMessage = {
+        msg: parsedData.searchString,
+        type: "message",
+      };
+      ws.send(JSON.stringify(res));
     } catch (err) {
       console.log(err);
       return;
@@ -123,15 +138,28 @@ wsServer.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
           return res.data;
         })
         .then((trademarks: Array<TrademarkAB>) => {
+          // Send to client on the number of results we got
+          const resCount: ResultCount = {
+            type: "resultCount",
+            count: trademarks.length,
+          };
+          ws.send(JSON.stringify(resCount));
+
+          // Iterate one by one the database iterms to get phonetic scores
           one_by_one(trademarks, (trademark: TrademarkAB) => {
             return abCompare(trademark, parsedData.searchString).then(
-              (res: AbResult) => {
+              (res: AbResultWs) => {
                 if (res.success) {
-                  ws.send(JSON.stringify(res));
+                  const result: AbResponse = {
+                    type: "response",
+                    results: [res],
+                  };
+
+                  ws.send(JSON.stringify(result));
                 } else {
                   // TODO: If fail, send to an array to rerun after everything is done
-                  ws.send(
-                    `Comparison between ${trademark} and ${parsedData.searchString} failed.`
+                  console.log(
+                    `Comparison between ${trademark.brand} and ${parsedData.searchString} failed.`
                   );
                 }
               }
@@ -139,7 +167,7 @@ wsServer.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
           });
         });
     } catch (err) {
-      ws.send(err.stringify());
+      console.log(err);
     }
   });
 

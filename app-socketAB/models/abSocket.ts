@@ -15,7 +15,6 @@ export interface TrademarkAB {
 }
 
 export interface AbResult {
-  success: boolean;
   responseTime: number;
   results: {
     image_title1: string;
@@ -30,4 +29,35 @@ export interface AbResult {
     word1_list: Array<number>;
     word2_list: Array<number>;
   };
+}
+
+export interface AbResultWs extends AbResult {
+  success: boolean;
+}
+
+// Responses to client
+// Define possible responses
+const responseTypes = <const>[
+  "message",
+  "response",
+  "resultCount",
+  "completion",
+];
+
+type Response = typeof responseTypes;
+
+export interface wsResponseFundamental {
+  type: typeof responseTypes[number];
+}
+
+export interface WsMessage extends wsResponseFundamental {
+  msg: string;
+}
+
+export interface ResultCount extends wsResponseFundamental {
+  count: number;
+}
+
+export interface AbResponse extends wsResponseFundamental {
+  results: Array<AbResultWs>;
 }
