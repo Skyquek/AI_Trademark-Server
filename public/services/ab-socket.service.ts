@@ -10,7 +10,7 @@ import {
   WsMessage,
   ResultCount,
 } from 'models/ab-result';
-import { Connections } from 'credentials';
+import { Connections } from 'variables';
 
 @Injectable({
   providedIn: 'root',

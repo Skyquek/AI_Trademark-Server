@@ -7,7 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { SimpleSearchResult } from 'models/simple-search-result';
 import { Trademark } from 'models/trademark';
 
-import { Connections } from 'credentials';
+import { Connections } from 'variables';
 import { utils } from 'utils';
 
 @Injectable({

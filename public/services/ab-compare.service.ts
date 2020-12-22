@@ -6,7 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { AbResult } from 'models/ab-result';
 
-import { Connections } from 'credentials';
+import { Connections } from 'variables';
 import { utils } from 'utils';
 
 @Injectable({
