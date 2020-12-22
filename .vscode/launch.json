@@ -5,6 +5,28 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "name": "ExpressTS Nodemon",
+      "program": "${workspaceFolder}/app-socketAB/src/app.ts",
+      "request": "launch",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "name": "ExpressJS Nodemon",
+      "program": "${workspaceFolder}/app/app.js",
+      "request": "launch",
+      "restart": true,
+      "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Angular Debug",
