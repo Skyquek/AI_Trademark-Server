@@ -1,0 +1,127 @@
+<div class="abCompareMain">
+    <img class="logo" src="../assets/logo-wording.png" />
+    <br><br>
+    <form (submit)="onSubmit(compareForm)" #compareForm="ngForm">
+
+        <h3>A - Compare</h3>
+        <mat-form-field appearance="outline">
+            <mat-label>A - Compare</mat-label>
+            <input matInput name="stringA" placeholder="Source String" ngModel #stringA="ngModel"
+                (click)="this.searchErrorA = false">
+        </mat-form-field>
+        <mat-error *ngIf="searchErrorA">Please input a source string.</mat-error>
+
+        <h3>B - Compare</h3>
+        <mat-form-field appearance="outline">
+            <mat-label>B - Compare</mat-label>
+            <input matInput name="stringB" placeholder="Destination String" ngModel #stringB="ngModel"
+                (click)="this.searchErrorB = false">
+        </mat-form-field>
+        <mat-error *ngIf="searchErrorB">Please input a string to be compared against.</mat-error>
+
+
+        <br>
+
+        <button mat-raised-button color="primary" type="submit">Compare</button>
+
+    </form>
+</div>
+
+<div *ngIf="this.pending" style="padding-top:40px; padding-bottom:40px">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="this.queried" id="compareResults">
+
+    <mat-card *ngIf="this.queried" id="resultCardParent">
+        <div style="padding-top:0px; padding-bottom: 20px">
+            Comparison done in {{response.responseTime}} seconds.
+        </div>
+
+        <table>
+            <td>
+                <span>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>{{response.results.tm1}}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <img mat-card-image [src]="'http://128.199.159.89:7000/' + response.results.image_title1"
+                                onerror="this.src = '../assets/PlaceholderImage.svg'" />
+
+                            <mat-card>
+                                <mat-card-content>
+                                    {{response.results.tm1}}:
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let wordList of response.results.word1_list">
+                                            {{wordList}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+
+                                </mat-card-content>
+                            </mat-card>
+                        </mat-card-content>
+                    </mat-card>
+                </span>
+
+            </td>
+            <td>
+                <span>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>{{response.results.tm2}}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <img mat-card-image [src]="'http://128.199.159.89:7000/' + response.results.image_title2"
+                                onerror="this.src = '../assets/PlaceholderImage.svg'" />
+
+                            <mat-card>
+                                <mat-card-content>
+                                    {{response.results.tm2}}:
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let wordList of response.results.word2_list">
+                                            {{wordList}}
+                                        </mat-chip>
+                                    </mat-chip-list>
+
+                                </mat-card-content>
+                            </mat-card>
+                        </mat-card-content>
+                    </mat-card>
+                </span>
+
+            </td>
+        </table>
+    </mat-card>
+
+</div>
+<div class="left-panel">
+    Left panel
+</div>
+<div class="right-panel">
+    Right Panel
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>{{response.results.tm1}} This is new panel</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <table>
+                <td>
+                    <img class="individual-res-img"
+                        [src]="'http://128.199.159.89:7000/' + response.results.image_title1"
+                        onerror="this.src = '../assets/PlaceholderImage.svg'" />
+
+                </td>
+                <td style="text-align:top">
+                    <mat-chip-list>
+                        <mat-chip *ngFor="let wordList of response.results.word1_list">
+                            {{wordList}}
+                        </mat-chip>
+                    </mat-chip-list>
+
+                </td>
+            </table>
+
+        </mat-card-content>
+    </mat-card>
+</div>
