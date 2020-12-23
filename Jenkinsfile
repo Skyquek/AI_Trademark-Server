@@ -27,10 +27,5 @@ pipeline {
                 sh 'cd app-socketAB && npm install --include=dev && npm run build'
             }
         }
-        stage('Build ExpressJS') { 
-            steps {
-                sh 'cd app && npm install --include=dev && node ./app.js'
-            }
-        }
     }
 }
