@@ -12,11 +12,13 @@ interface wsResponseFundamental {
   type: typeof responseTypes[number];
 }
 
-export interface AbResult{
+export interface AbResult {
   responseTime: number;
   results: {
     image_title1: string;
+    image_title1_3d: string;
     image_title2: string;
+    image_title2_3d: string;
     image_title_combined: string;
     percentage_difference: number;
     tm1: string;
