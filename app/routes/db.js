@@ -65,7 +65,7 @@ function exactMatch(queryString, column) {
 router.get('/search', async (req, res, next) => {
   var pre_query = new Date().getTime();
 
-  const queryString = req.query.string;
+  const queryString = req.query.string.replace(/\%/g, '');
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (!req.query['string']) {
     res.send('No parameters passed.');
@@ -76,17 +76,16 @@ router.get('/search', async (req, res, next) => {
 
       var sanitizedString = req.query.string.replace(/\*/g, '%');
       const dbConn = utils.getdbConn();
-      dbConn.query("SELECT * FROM tbl_trademark WHERE brand LIKE ? UNION SELECT * FROM tbl_trademark WHERE holder LIKE ?",
-        [sanitizedString, sanitizedString], (err, result) => {
+      dbConn.query("SELECT * FROM tbl_trademark WHERE UPPER(number) LIKE ? UNION SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? UNION SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ?",
+        [sanitizedString, sanitizedString, sanitizedString], (err, result) => {
           dbConn.end();
 
           if (err) console.log(err);
 
           var post_query = new Date().getTime();
 
-          console.log((post_query - pre_query) / 1000);
-
           res.send({
+            type: "userProvidedWildcard",
             responseTime: (post_query - pre_query) / 1000,
             results: result
           });
@@ -95,14 +94,25 @@ router.get('/search', async (req, res, next) => {
     } else {
       // Workload that is placed on database server
       const dbConn = utils.getdbConn();
-      dbConn.query('SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? UNION SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? AND number NOT IN (SELECT number FROM tbl_trademark WHERE UPPER(brand) LIKE ?) UNION SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ? UNION SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ? AND number NOT IN (SELECT number FROM tbl_trademark WHERE UPPER(holder) LIKE ?)',
+      dbConn.query('SELECT * FROM tbl_trademark WHERE UPPER(number) LIKE ? UNION \
+      SELECT * FROM tbl_trademark WHERE UPPER(number) LIKE ? AND number NOT IN \
+      (SELECT number FROM tbl_trademark WHERE UPPER(number) LIKE ?) UNION \
+      SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? UNION \
+      SELECT * FROM tbl_trademark WHERE UPPER(brand) LIKE ? AND number NOT IN \
+      (SELECT number FROM tbl_trademark WHERE UPPER(brand) LIKE ?) UNION \
+      SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ? UNION \
+      SELECT * FROM tbl_trademark WHERE UPPER(holder) LIKE ? AND number NOT IN \
+      (SELECT number FROM tbl_trademark WHERE UPPER(holder) LIKE ?)',
         [
           queryString.toUpperCase() + '%',
           '%' + queryString.toUpperCase() + '%',
           queryString.toUpperCase() + '%',
           queryString.toUpperCase() + '%',
-          '%' + queryString.toUpperCase() +
-          '%', queryString.toUpperCase() + '%'
+          '%' + queryString.toUpperCase() + '%',
+          queryString.toUpperCase() + '%',
+          queryString.toUpperCase() + '%',
+          '%' + queryString.toUpperCase() + '%',
+          queryString.toUpperCase() + '%',
         ], (err, result) => {
           dbConn.end();
           if (err) console.log(err);
@@ -112,6 +122,7 @@ router.get('/search', async (req, res, next) => {
           console.log((post_query - pre_query) / 1000);
 
           result = {
+            type: "systemProvidedWildcard",
             responseTime: (post_query - pre_query) / 1000,
             results: result
           }
