@@ -77,6 +77,7 @@
 
               <div class="col-sm-12">
                 <mat-card class="label">
+                  <mat-card-title><h2>{{response.results.tm1}} VS {{response.results.tm2}}</h2></mat-card-title>
                   <img [src]="'http://128.199.159.89:7000/' + response.results.image_title_combined"
                             onerror="this.src = '../assets/PlaceholderImage.svg'" />
                 </mat-card>
