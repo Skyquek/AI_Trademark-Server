@@ -1,7 +1,7 @@
 <div class="searchpagemain">
     <img class="logo" src="../assets/logo-wording.png" />
     <br><br>
-    <form (submit)="onSearch(searchForm)" #searchForm="ngForm">
+    <form #searchForm="ngForm">
         <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
             <input matInput name="searchString" placeholder="Any trademark you want to search 😍" ngModel
@@ -9,9 +9,9 @@
         </mat-form-field>
         <mat-error *ngIf="searchError">Please input a search string.</mat-error>
         <br>
-        <button mat-raised-button color="primary" type="submit">Search</button>
+        <button mat-raised-button color="primary" (click)="onSearch(searchForm)">Search</button>
         <span style="padding-left:5%"></span>
-        <button mat-raised-button>Random Trademark</button>
+        <button mat-raised-button (click)="randomTrademark()">Random Trademark</button>
 
     </form>
 </div>

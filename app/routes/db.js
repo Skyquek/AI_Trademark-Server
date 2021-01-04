@@ -194,11 +194,12 @@ router.get('/abAll/:key', (req, res) => {
 });
 
 router.get('/random', (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
   const dbConn = utils.getdbConn();
   dbConn.query('SELECT * FROM trademarkprj.tbl_trademark ORDER BY RAND() LIMIT 1', (err, result) => {
     dbConn.end();
     if (err) throw err;
-    res.send(result);
+    res.send(result[0]);
   });
 })
 
