@@ -37,3 +37,51 @@ mat-spinner {
   height:30%;
   max-height:300px;
 }
+
+.mat-card-image {
+  width: 40%;
+}
+
+.card-content-wrapper {
+  text-align: center;
+}
+
+.input-word {
+  text-align: center;
+}
+
+.label {
+  font-size: 20px;
+  color:white;
+  background-color: black;
+  padding: 20px;
+  margin: 15%;
+}
+
+.label-result {
+  font-weight: bold;
+  background-color: Green;
+}
+
+.label-similarity-percentage{
+  background-color: white;
+  color: black;
+}
+
+.label-confidence {
+  background-color: white;
+  color: black;
+}
+
+.result-data {
+  text-align: center;
+}
+
+.wordlist-holder {
+  text-align: center;
+}
+
+.text-result {
+  text-align: right;
+  font-size: 25px;
+}
