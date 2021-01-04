@@ -1,28 +1,104 @@
+<div class="searchmain">
+    <img class="logo" src="../assets/logo-wording.png" />
+    <br><br>
+    <mat-form-field appearance="outline">
+        <input matInput [(ngModel)]="newMessage" (keyup)="$event.keyCode == 13 && sendMessage()" />
+
+    </mat-form-field>
+    <br>
+    <button mat-raised-button color="primary" (click)="sendMessage()">
+        Search
+    </button>
+
+</div>
+
 <div *ngIf="totalResultCount >= 0">
     A total of {{totalResultCount}} results will be queued for processing. <br>
     Processed result {{resultList.length}} of {{totalResultCount}}. <br>
     {{totalResultCount - resultList.length}} remaining.
 </div>
 
-<div *ngFor="let result of resultList">
-    <mat-card>
+<div *ngIf="queried && (resultList.length != totalResultCount)">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngFor="let result of resultList" class="search-results">
+    <mat-card class="result-card">
         <mat-card-header>
             <mat-card-title>{{result.results.tm1}} vs {{result.results.tm2}}</mat-card-title>
-            <mat-card-subtitle *ngIf="result.results.phonetic_similar">
-                Similar by {{result.results.percentage_difference * 100}}% with
-                {{result.results.confidence_phonetic}} confidence.
-            </mat-card-subtitle>
-            <mat-card-subtitle *ngIf="!result.results.phonetic_similar">
-                Not similar with {{result.results.confidence_phonetic}} confidence.
-            </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            {{result.results}}
+            <h1 *ngIf="result.results.phonetic_similar" class="similar">
+                Similar by {{result.results.percentage_difference * 100}}% with
+                {{result.results.confidence_phonetic}} confidence.
+            </h1>
+            <h1 *ngIf="!result.results.phonetic_similar" class="non-similar">
+                Not similar with {{result.results.confidence_phonetic}} confidence.
+            </h1>
+            <table>
+                <tr>
+                    <td>
+                        {{result.results.tm1}}
+
+                    </td>
+                    <td>
+                        {{result.results.tm2}}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <img mat-card-image [src]="'http://128.199.159.89:7000/' + result.results.image_title1"
+                            onerror="this.src = '../assets/PlaceholderImage.svg'" />
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let wordList of result.results.word1_list">
+                                {{wordList}}
+                            </mat-chip>
+                        </mat-chip-list>
+                    </td>
+                    <td>
+                        <img mat-card-image [src]="'http://128.199.159.89:7000/' + result.results.image_title2"
+                            onerror="this.src = '../assets/PlaceholderImage.svg'" />
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let wordList of result.results.word2_list">
+                                {{wordList}}
+                            </mat-chip>
+                        </mat-chip-list>
+                    </td>
+                    <td>
+                        {{result.results.tm1}} vs {{result.results.tm2}}
+                        <img mat-card-image [src]="'http://128.199.159.89:7000/' + result.results.image_title_combined"
+                            onerror="this.src = '../assets/PlaceholderImage.svg'" />
+                    </td>
+                </tr>
+            </table>
+            <br><br>
+            <table>
+                <tr>
+                    <td>
+                        {{result.results.tm1}}
+                    </td>
+                    <td>
+                        {{result.results.tm2}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img mat-card-image [src]="'http://128.199.159.89:7000/' + result.results.image_title1_3d"
+                            onerror="this.src = '../assets/PlaceholderImage.svg'" />
+                    </td>
+                    <td>
+                        <img mat-card-image [src]="'http://128.199.159.89:7000/' + result.results.image_title2_3d"
+                            onerror="this.src = '../assets/PlaceholderImage.svg'" />
+
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
         </mat-card-content>
     </mat-card>
 </div>
-
-<input [(ngModel)]="newMessage" (keyup)="$event.keyCode == 13 && sendMessage()" />
-<button (click)="sendMessage()">
-    Send Message
-</button>
