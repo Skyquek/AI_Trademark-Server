@@ -12,6 +12,7 @@ export class AbComparisonAllComponent implements OnInit {
   resultList: Array<AbResultWs> = [];
   failList: Array<AbResultWs> = [];
   totalResultCount: number = -1;
+  queried: boolean = false;
 
   newMessage: string = '';
 
@@ -33,6 +34,7 @@ export class AbComparisonAllComponent implements OnInit {
   }
 
   sendMessage() {
+    this.queried = true;
     this.abService.sendMessage(this.newMessage.valueOf());
     console.log('Sending ' + this.newMessage.valueOf() + ' for comparison');
   }
